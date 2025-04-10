@@ -7,14 +7,14 @@ assignees: ''
 
 ---
 
-**Story Points**: 5 (Fibonacci scale)  
-**Priority**: High  
+- **Story Points**: 5 (Fibonacci scale)  
+- **Priority**: High  
 - **Acceptance Criteria**:  
   - [ ] Module created with `product-service` directory structure  
   - [ ] Parent POM dependencies configured  
   - [ ] Basic health endpoint available at `/actuator/health` 
 
-**Tech Notes**:
+- **Tech Notes**:
 ```xml
 <!-- pom.xml -->
 <parent>
@@ -23,4 +23,4 @@ assignees: ''
     <version>3.2.0</version>
 </parent>
 ```
-**Estimated Time**: 1 hours
+- **Estimated Time**: 1 hours
