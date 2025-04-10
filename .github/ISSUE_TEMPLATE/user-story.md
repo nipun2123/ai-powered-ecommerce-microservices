@@ -6,9 +6,6 @@ labels: user story
 assignees: ''
 
 ---
-
-## [User Story] As a Developer, I want a foundational Spring Boot module for product management so that I can build product-related features
-
 **Story Points**: 5 (Fibonacci scale)  
 **Priority**: High  
 - **Acceptance Criteria**:  
