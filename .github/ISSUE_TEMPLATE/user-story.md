@@ -3,7 +3,7 @@ name: User story
 about: Template for a stories for Scrum sprint
 title: "[User Story] As a ___, I want ___ so that I can ___"
 labels: user story
-assignees: ''
+assignees: nipun2123
 
 ---
 
