@@ -6,6 +6,7 @@ labels: user story
 assignees: ''
 
 ---
+
 **Story Points**: 5 (Fibonacci scale)  
 **Priority**: High  
 - **Acceptance Criteria**:  
