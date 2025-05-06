@@ -1,0 +1,1 @@
+ALTER TABLE "inventory_item" ADD COLUMN "created_at" timestamptz DEFAULT (now());
