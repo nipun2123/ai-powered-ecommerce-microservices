@@ -3,7 +3,9 @@ package com.devicehub.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -20,12 +22,14 @@ public class InventoryItem {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(length = 20)
     private String batchNumber;
 
     private Integer availableQuantity = 0;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

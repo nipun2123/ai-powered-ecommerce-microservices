@@ -31,6 +31,7 @@ public class Product {
 
     @Column(nullable = false, unique = true, length = 32)
     private String sku;
+
     @Column(nullable = false, unique = true, length = 32)
     private String barcode;
 
@@ -67,6 +68,7 @@ public class Product {
 
     @Column(precision = 4, scale = 1)
     private BigDecimal mainCamMp;
+
     @Column(precision = 4, scale = 1)
     private BigDecimal frontCamMp;
 
@@ -75,7 +77,14 @@ public class Product {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private PhoneSpec phoneSpec;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private TabletSpec tabletSpec;
 
 }
