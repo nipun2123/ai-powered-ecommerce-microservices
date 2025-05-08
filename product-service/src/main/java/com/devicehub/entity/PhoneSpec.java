@@ -2,6 +2,7 @@ package com.devicehub.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,12 +17,11 @@ import java.util.UUID;
 public class PhoneSpec {
 
     @Id
-    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.TIME)
     private UUID id;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(precision = 4, scale = 1)
@@ -30,6 +30,6 @@ public class PhoneSpec {
     @Column(length = 5)
     private String ipRating;
 
-    private boolean hasEstim = false;
+    private boolean hasEsim = false;
 
 }

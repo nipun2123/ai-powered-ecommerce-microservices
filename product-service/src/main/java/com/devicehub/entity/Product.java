@@ -20,8 +20,8 @@ import java.util.UUID;
 @Builder
 public class Product {
 
-    public enum ProductCategory {
-        PHONE, TABLET
+    public enum Category {
+        phone, tablet
     }
 
     @Id
@@ -48,8 +48,8 @@ public class Product {
     private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private ProductCategory category;
+    @Column(nullable = false, length = 6)
+    private Category category;
 
     @Column(nullable = false, length = 10)
     private String os;

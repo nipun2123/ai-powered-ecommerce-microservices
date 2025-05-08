@@ -51,7 +51,7 @@ class PhoneSpecRepositoryTest {
                     .os("Android")
                     .barcode("fefreg3232")
                     .batteryMah(3274)
-                    .category(Product.ProductCategory.PHONE)
+                    .category(Product.Category.phone)
                     .chipset("A16 Bionic")
                     .price(BigDecimal.valueOf(900.99))
                     .ramGb(32)
@@ -68,7 +68,7 @@ class PhoneSpecRepositoryTest {
 
             PhoneSpec phoneSpecModel = PhoneSpec.builder()
                     .product(savedProduct)
-                    .hasEstim(true)
+                    .hasEsim(true)
                     .ipRating("IP68")
                     .ultraWideCamMp(BigDecimal.valueOf(68.8))
                     .build();
@@ -79,7 +79,7 @@ class PhoneSpecRepositoryTest {
             Optional<PhoneSpec> phoneSpec = phoneSpecRepository.findById(savedPhoneSpec.getId());
 
             assertTrue(phoneSpec.isPresent());
-            assertEquals(savedPhoneSpec.isHasEstim(),phoneSpec.get().isHasEstim());
+            assertEquals(savedPhoneSpec.isHasEsim(),phoneSpec.get().isHasEsim());
             assertEquals(savedPhoneSpec.getProduct().getName(),phoneSpec.get().getProduct().getName());
         }
 }

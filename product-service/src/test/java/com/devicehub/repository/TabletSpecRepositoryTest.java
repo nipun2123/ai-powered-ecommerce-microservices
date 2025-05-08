@@ -50,7 +50,7 @@ class TabletSpecRepositoryTest {
                 .os("Android")
                 .barcode("fefreg3232")
                 .batteryMah(3274)
-                .category(Product.ProductCategory.TABLET)
+                .category(Product.Category.tablet)
                 .chipset("A16 Bionic")
                 .price(BigDecimal.valueOf(900.99))
                 .ramGb(32)

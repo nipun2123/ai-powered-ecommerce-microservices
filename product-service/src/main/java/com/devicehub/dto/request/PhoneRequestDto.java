@@ -1,5 +1,6 @@
 package com.devicehub.dto.request;
 
+import com.devicehub.entity.Product;
 import lombok.Builder;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -8,9 +9,6 @@ import java.math.BigDecimal;
 @Builder
 public class PhoneRequestDto {
 
-    public enum ProductCategory {
-        PHONE, TABLET
-    }
     // common product fields
     private String sku;
     private String barcode;
@@ -18,7 +16,7 @@ public class PhoneRequestDto {
     private String brand;
     private String description;
     private BigDecimal price;
-    private ProductCategory category;
+    private Product.Category category;
     private String os;
     private String chipset;
     private int ramGb;
@@ -33,5 +31,5 @@ public class PhoneRequestDto {
     // phone specific fields
     private BigDecimal ultraWideCamMp;
     private String ipRating;
-    private boolean hasEstim = false;
+    private boolean hasEsim = false;
 }

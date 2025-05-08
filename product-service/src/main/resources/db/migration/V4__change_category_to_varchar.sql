@@ -1,0 +1,2 @@
+ALTER TABLE product ALTER COLUMN category TYPE VARCHAR(6);
+

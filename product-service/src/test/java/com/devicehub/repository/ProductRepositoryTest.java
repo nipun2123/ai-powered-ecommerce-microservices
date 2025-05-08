@@ -1,7 +1,9 @@
 package com.devicehub.repository;
 
 
+import com.devicehub.entity.PhoneSpec;
 import com.devicehub.entity.Product;
+import com.devicehub.entity.TabletSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,7 @@ class ProductRepositoryTest {
                 .os("Android")
                 .barcode("fefreg3232")
                 .batteryMah(3274)
-                .category(Product.ProductCategory.PHONE)
+                .category(Product.Category.phone)
                 .chipset("A16 Bionic")
                 .price(BigDecimal.valueOf(900.99))
                 .ramGb(32)
@@ -68,7 +70,7 @@ class ProductRepositoryTest {
                 .os("IOS")
                 .barcode("X002322323")
                 .batteryMah(3274)
-                .category(Product.ProductCategory.PHONE)
+                .category(Product.Category.phone)
                 .chipset("A16 Bionic")
                 .price(BigDecimal.valueOf(900.99))
                 .ramGb(32)
@@ -88,7 +90,7 @@ class ProductRepositoryTest {
                 .os("iPadOS")
                 .barcode("X003232887482")
                 .batteryMah(3274)
-                .category(Product.ProductCategory.TABLET)
+                .category(Product.Category.tablet)
                 .chipset("M2")
                 .price(BigDecimal.valueOf(900.99))
                 .ramGb(32)
@@ -108,7 +110,7 @@ class ProductRepositoryTest {
                 .os("Android")
                 .barcode("X003232887421")
                 .batteryMah(3274)
-                .category(Product.ProductCategory.TABLET)
+                .category(Product.Category.tablet)
                 .chipset("Snapdragon 8 Gen 2")
                 .price(BigDecimal.valueOf(900.99))
                 .ramGb(32)
@@ -129,7 +131,13 @@ class ProductRepositoryTest {
 
 
     @Test
-    void shouldCreateAndRetriveProduct(){
+    void shouldCreateAndRetrieveProductPhone(){
+
+        PhoneSpec phoneSpecModel = PhoneSpec.builder()
+                .hasEsim(true)
+                .ipRating("IP68")
+                .ultraWideCamMp(BigDecimal.valueOf(68.8))
+                .build();
 
         Product product = Product.builder()
                 .sku("PH-APP-01")
@@ -138,7 +146,7 @@ class ProductRepositoryTest {
                 .os("IOS")
                 .barcode("X00329828329")
                 .batteryMah(3274)
-                .category(Product.ProductCategory.PHONE)
+                .category(Product.Category.phone)
                 .chipset("A16 Bionic")
                 .price(BigDecimal.valueOf(900.99))
                 .ramGb(32)
@@ -148,7 +156,9 @@ class ProductRepositoryTest {
                 .storageGb(256)
                 .refreshRateHz(120)
                 .screenSizeInches(BigDecimal.valueOf(6.7))
+                .phoneSpec(phoneSpecModel)
                 .build();
+        phoneSpecModel.setProduct(product);
 
         productRepository.save(product);
 
@@ -157,7 +167,51 @@ class ProductRepositoryTest {
         assertTrue(savedProduct.isPresent());
 
         assertEquals(product.getName(),savedProduct.get().getName());
+        assertEquals("PHONE",savedProduct.get().getCategory().name());
+        assertEquals(product.getPhoneSpec().getIpRating(),savedProduct.get().getPhoneSpec().getIpRating());
     }
+
+
+    @Test
+    void shouldCreateAndRetrieveProductTablet(){
+
+        TabletSpec tabletSpecModel = TabletSpec.builder()
+                .hasCellular(true)
+                .stylusSupported(true)
+                .keyboardSupport(true)
+                .build();
+
+        Product product = Product.builder()
+                .sku("IP-APPL-15")
+                .name("IPad Pro Max")
+                .brand("Apple")
+                .os("IOS")
+                .barcode("X003111111")
+                .batteryMah(3274)
+                .category(Product.Category.tablet)
+                .chipset("A16 Bionic")
+                .price(BigDecimal.valueOf(900.99))
+                .ramGb(32)
+                .description("Sample description")
+                .frontCamMp(BigDecimal.valueOf(48.8))
+                .mainCamMp(BigDecimal.valueOf(64.8))
+                .storageGb(256)
+                .refreshRateHz(120)
+                .screenSizeInches(BigDecimal.valueOf(6.7))
+                .tabletSpec(tabletSpecModel)
+                .build();
+        tabletSpecModel.setProduct(product);
+
+        productRepository.save(product);
+
+        Optional<Product> savedProduct = productRepository.findBySku(product.getSku());
+
+        assertTrue(savedProduct.isPresent());
+
+        assertEquals(product.getName(),savedProduct.get().getName());
+        assertEquals(product.getTabletSpec().isHasCellular(),savedProduct.get().getTabletSpec().isHasCellular());
+    }
+
 
     @Test
     void shouldRetrieveAllProducts(){
@@ -237,7 +291,7 @@ class ProductRepositoryTest {
 
     @Test
     void shouldRetrieveAllApplePhones(){
-        List<Product> SamsungPhones = productRepository.findByBrandAndCategory("Samsung", Product.ProductCategory.PHONE);
+        List<Product> SamsungPhones = productRepository.findByBrandAndCategory("Samsung", Product.Category.phone);
         assertEquals(1, SamsungPhones.size());
         assertTrue(SamsungPhones.stream().allMatch(p->"Samsung".equals(p.getBrand())));
         assertTrue(SamsungPhones.stream().allMatch(p->"PHONE".equals(p.getCategory().name())));
@@ -252,7 +306,7 @@ class ProductRepositoryTest {
                 .os("IOS")
                 .barcode("X003298232322")
                 .batteryMah(3274)
-                .category(Product.ProductCategory.PHONE)
+                .category(Product.Category.phone)
                 .chipset("A16 Bionic")
                 .price(BigDecimal.valueOf(900.99))
                 .ramGb(32)

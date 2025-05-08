@@ -11,5 +11,5 @@ public class PhoneResponseDto extends ProductResponseDto {
     private Product product;
     private BigDecimal ultraWideCamMp;
     private String ipRating;
-    private boolean hasEstim = false;
+    private boolean hasEsim = false;
 }
