@@ -10,6 +10,7 @@ public class TabletRequestDto {
 
     // common product fields
     private String sku;
+    private String currentSku;
     private String barcode;
     private String name;
     private String brand;

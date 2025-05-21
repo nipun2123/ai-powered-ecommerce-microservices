@@ -1,11 +1,13 @@
 package com.devicehub.dto.response;
 
 import com.devicehub.entity.Product;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@Builder
 public class ProductListItemResponseDto {
 
     // common product fields

@@ -1,10 +1,16 @@
 package com.devicehub.dto.response;
 
 import com.devicehub.entity.Product;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductResponseDto {
 
 

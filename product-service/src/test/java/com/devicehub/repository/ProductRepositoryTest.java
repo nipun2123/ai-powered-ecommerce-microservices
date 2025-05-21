@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -222,8 +224,8 @@ class ProductRepositoryTest {
 
     @Test
     void shouldRetrieveAllAvailableProduct(){
-
-        List<Product> allProducts = productRepository.findAvailableProducts();
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> allProducts = productRepository.findAvailableProducts(pageRequest).toList();
         assertEquals(2, allProducts.size());
         assertEquals("WD-FDF-01", allProducts.get(0).getSku());
         System.out.println("Phone data:................"+allProducts.get(0).getPhoneSpec());
@@ -231,39 +233,45 @@ class ProductRepositoryTest {
 
     @Test
     void shouldRetrieveAllPhones(){
-        List<Product> allPhones = productRepository.findAllPhones();
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> allPhones = productRepository.findAllPhones(pageRequest).toList();
         assertEquals(2, allPhones.size());
     }
 
     @Test
     void shouldRetrieveAvailablePhones(){
-        List<Product> availablePhones = productRepository.findAvailablePhones();
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> availablePhones = productRepository.findAvailablePhones(pageRequest).toList();
         assertEquals(1, availablePhones.size());
         assertEquals("WD-FDF-01", availablePhones.get(0).getSku());
     }
     @Test
     void shouldRetrieveAllTablets(){
-        List<Product> allTablet = productRepository.findAllTablet();
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> allTablet = productRepository.findAllTablet(pageRequest).toList();
         assertEquals(2, allTablet.size());
     }
 
     @Test
     void shouldRetrieveAvailableTablets(){
-        List<Product> availableTablet = productRepository.findAvailableTablet();
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> availableTablet = productRepository.findAvailableTablet(pageRequest).toList();
         assertEquals(1, availableTablet.size());
         assertEquals("TB-SAM-01", availableTablet.get(0).getSku());
     }
 
     @Test
     void shouldRetrieveAllSamsung(){
-        List<Product> allSamsung = productRepository.findByBrand("Samsung");
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> allSamsung = productRepository.findByBrandIgnoreCase("Samsung",pageRequest).toList();
         assertEquals(2, allSamsung.size());
         assertTrue(allSamsung.stream().allMatch(p->"Samsung".equals(p.getBrand())));
     }
 
     @Test
     void shouldRetrieveAllApple(){
-        List<Product> allApple = productRepository.findByBrand("Apple");
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> allApple = productRepository.findByBrandIgnoreCase("Apple",pageRequest).toList();
         assertEquals(2, allApple.size());
         assertTrue(allApple.stream().allMatch(p->"Apple".equals(p.getBrand())));
     }
@@ -277,21 +285,23 @@ class ProductRepositoryTest {
 
     @Test
     void shouldRetrieveProductByName(){
-        Optional<Product> product = productRepository.findByName("iPad Pro");
+        Optional<Product> product = productRepository.findByNameIgnoreCase("iPad Pro");
         assertTrue(product.isPresent());
         assertEquals("iPad Pro", product.get().getName());
     }
 
     @Test
     void shouldRetrieveProductsByNameContaining(){
-        List<Product> productList = productRepository.findByNameContainingIgnoreCase("SamSunG");
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> productList = productRepository.findByNameContainingIgnoreCase("SamSunG",pageRequest).toList();
         assertEquals(2, productList.size());
         assertTrue(productList.stream().anyMatch(p->"Samsung Galaxy Tab S9".equals(p.getName())));
     }
 
     @Test
     void shouldRetrieveAllApplePhones(){
-        List<Product> SamsungPhones = productRepository.findByBrandAndCategory("Samsung", Product.Category.phone);
+        PageRequest pageRequest = PageRequest.of(0, 4);
+        List<Product> SamsungPhones = productRepository.findByBrandIgnoreCaseAndCategory("Samsung", Product.Category.phone,pageRequest).toList();
         assertEquals(1, SamsungPhones.size());
         assertTrue(SamsungPhones.stream().allMatch(p->"Samsung".equals(p.getBrand())));
         assertTrue(SamsungPhones.stream().allMatch(p->"PHONE".equals(p.getCategory().name())));
