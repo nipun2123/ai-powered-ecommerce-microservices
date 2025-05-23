@@ -27,17 +27,17 @@ public interface IProductService {
     /**
      * @Param phoneRequestDto - PhoneRequestDto
      */
-    boolean updatePhone(PhoneRequestDto phoneRequestDto);
+    void updatePhone(PhoneRequestDto phoneRequestDto);
 
     /**
      * @Param tabletRequestDto - TabletRequestDto
      */
-    boolean updateTablet(TabletRequestDto tabletRequestDto);
+    void updateTablet(TabletRequestDto tabletRequestDto);
 
     /**
      * @Param tabletRequestDto - TabletRequestDto
      */
-    boolean updateAvailability(String sku, boolean isAvailable);
+    void updateAvailability(String sku, boolean isAvailable);
 
     /**
      * @Return List of all products

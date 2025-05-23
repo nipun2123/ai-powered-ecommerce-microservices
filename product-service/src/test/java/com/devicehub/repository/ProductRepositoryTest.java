@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -164,7 +163,7 @@ class ProductRepositoryTest {
 
         productRepository.save(product);
 
-        Optional<Product> savedProduct = productRepository.findBySku(product.getSku());
+        Optional<Product> savedProduct = productRepository.findBySkuIgnoreCase(product.getSku());
 
         assertTrue(savedProduct.isPresent());
 
@@ -206,7 +205,7 @@ class ProductRepositoryTest {
 
         productRepository.save(product);
 
-        Optional<Product> savedProduct = productRepository.findBySku(product.getSku());
+        Optional<Product> savedProduct = productRepository.findBySkuIgnoreCase(product.getSku());
 
         assertTrue(savedProduct.isPresent());
 
@@ -278,7 +277,7 @@ class ProductRepositoryTest {
 
     @Test
     void shouldRetrieveProductBySKU(){
-        Optional<Product> product = productRepository.findBySku("AD-APP-01");
+        Optional<Product> product = productRepository.findBySkuIgnoreCase("AD-APP-01");
         assertTrue(product.isPresent());
         assertEquals("AD-APP-01", product.get().getSku());
     }

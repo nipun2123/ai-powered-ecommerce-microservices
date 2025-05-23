@@ -76,9 +76,11 @@ public class Product {
     private boolean isActive;
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(insertable = false)
     private LocalDateTime updatedAt;
 
     @OneToOne(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

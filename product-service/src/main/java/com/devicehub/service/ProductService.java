@@ -4,9 +4,10 @@ import com.devicehub.dto.request.PhoneRequestDto;
 import com.devicehub.dto.request.TabletRequestDto;
 import com.devicehub.dto.response.PhoneResponseDto;
 import com.devicehub.dto.response.ProductListItemResponseDto;
-import com.devicehub.dto.response.ProductResponseDto;
 import com.devicehub.dto.response.TabletResponseDto;
 import com.devicehub.entity.Product;
+import com.devicehub.expection.ResourceNotFoundException;
+import com.devicehub.expection.SkuAlreadyExistsException;
 import com.devicehub.mapper.ProductMapper;
 import com.devicehub.repository.ProductRepository;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,55 +28,77 @@ public class ProductService implements IProductService{
 
     @Override
     public void savePhone(PhoneRequestDto phoneRequestDto) {
+        Optional<Product> productBySku = productRepository.findBySkuIgnoreCase(phoneRequestDto.getSku());
+        if(productBySku.isPresent()){
+            throw new SkuAlreadyExistsException("The product of "+productBySku.get().getName() +" already saved with this SKU: "+productBySku.get().getSku());
+        }
+
+        Optional<Product> productByBarcode = productRepository.findByBarcode(phoneRequestDto.getBarcode());
+        if(productByBarcode.isPresent()){
+            throw new SkuAlreadyExistsException("The product of "+productByBarcode.get().getName() +" already saved with this barcode: "+productByBarcode.get().getBarcode());
+        }
         productRepository.save(ProductMapper.phoneRequestDtoToProduct(phoneRequestDto));
     }
 
     @Override
     public void saveTablet(TabletRequestDto tabletRequestDto) {
+        Optional<Product> productBySku = productRepository.findBySkuIgnoreCase(tabletRequestDto.getSku());
+        if(productBySku.isPresent()){
+            throw new SkuAlreadyExistsException("The product of "+productBySku.get().getName() +" already saved with this SKU: "+productBySku.get().getSku());
+        }
+
+        Optional<Product> productByBarcode = productRepository.findByBarcode(tabletRequestDto.getBarcode());
+        if(productByBarcode.isPresent()){
+            throw new SkuAlreadyExistsException("The product of "+productByBarcode.get().getName() +" already saved with this barcode: "+productByBarcode.get().getBarcode());
+        }
         productRepository.save(ProductMapper.tabletRequestDtoToProduct(tabletRequestDto));
     }
 
     @Override
-    public boolean updatePhone(PhoneRequestDto phoneRequestDto) {
-        boolean isUpdated = false;
-        Optional<Product> productbySku = productRepository.findBySku(phoneRequestDto.getCurrentSku());
+    public void updatePhone(PhoneRequestDto phoneRequestDto) {
+        Product oldProduct = productRepository.findBySkuIgnoreCase(phoneRequestDto.getCurrentSku()).orElseThrow(() -> new ResourceNotFoundException("Product", "SKU", phoneRequestDto.getCurrentSku()));;
 
-        if(productbySku.isPresent()){
-            Product product = ProductMapper.phoneRequestDtoToProduct(phoneRequestDto);
-            product.setId(productbySku.get().getId());
-            product.getPhoneSpec().setId(productbySku.get().getPhoneSpec().getId());
-            productRepository.save(product);
-            isUpdated = true;
+        Optional<Product> productBySku = productRepository.findBySkuIgnoreCase(phoneRequestDto.getSku());
+        if(productBySku.isPresent() && !oldProduct.getSku().equals(phoneRequestDto.getSku())){
+            throw new SkuAlreadyExistsException("The product of "+productBySku.get().getName() +" already saved with this SKU: "+productBySku.get().getSku());
         }
-        return isUpdated;
+
+        Optional<Product> productByBarcode = productRepository.findByBarcode(phoneRequestDto.getBarcode());
+        if(productByBarcode.isPresent() && !oldProduct.getBarcode().equals(phoneRequestDto.getBarcode())){
+            throw new SkuAlreadyExistsException("The product of "+productByBarcode.get().getName() +" already saved with this barcode: "+productByBarcode.get().getBarcode());
+        }
+        Product product = ProductMapper.phoneRequestDtoToProduct(phoneRequestDto);
+        product.setId(oldProduct.getId());
+        product.getPhoneSpec().setId(oldProduct.getPhoneSpec().getId());
+        productRepository.save(product);
     }
 
     @Override
-    public boolean updateTablet(TabletRequestDto tabletRequestDto) {
-        boolean isUpdated = false;
-        Optional<Product> productbySku = productRepository.findBySku(tabletRequestDto.getCurrentSku());
+    public void updateTablet(TabletRequestDto tabletRequestDto) {
 
-        if(productbySku.isPresent()){
-            Product product = ProductMapper.tabletRequestDtoToProduct(tabletRequestDto);
-            product.setId(productbySku.get().getId());
-            product.getTabletSpec().setId(productbySku.get().getTabletSpec().getId());
-            productRepository.save(product);
-            isUpdated = true;
+        Product oldProduct = productRepository.findBySkuIgnoreCase(tabletRequestDto.getCurrentSku()).orElseThrow(() -> new ResourceNotFoundException("Product", "SKU", tabletRequestDto.getCurrentSku()));;
+
+        Optional<Product> productBySku = productRepository.findBySkuIgnoreCase(tabletRequestDto.getSku());
+        if(productBySku.isPresent() && !oldProduct.getSku().equals(tabletRequestDto.getSku())){
+            throw new SkuAlreadyExistsException("The product of "+productBySku.get().getName() +" already saved with this SKU: "+productBySku.get().getSku());
         }
-        return isUpdated;
+
+        Optional<Product> productByBarcode = productRepository.findByBarcode(tabletRequestDto.getBarcode());
+        if(productByBarcode.isPresent()  && !oldProduct.getBarcode().equals(tabletRequestDto.getBarcode())){
+            throw new SkuAlreadyExistsException("The product of "+productByBarcode.get().getName() +" already saved with this barcode: "+productByBarcode.get().getBarcode());
+        }
+
+        Product product = ProductMapper.tabletRequestDtoToProduct(tabletRequestDto);
+        product.setId(oldProduct.getId());
+        product.getTabletSpec().setId(oldProduct.getTabletSpec().getId());
+        productRepository.save(product);
     }
 
     @Override
-    public boolean updateAvailability(String sku, boolean isAvailable) {
-        boolean isUpdated = false;
-        Optional<Product> productbySku = productRepository.findBySku(sku);
-
-        if(productbySku.isPresent()){
-            productbySku.get().setActive(isAvailable);
-            productRepository.save(productbySku.get());
-            isUpdated = true;
-        }
-        return isUpdated;
+    public void updateAvailability(String sku, boolean isAvailable) {
+        Product productbySku = productRepository.findBySkuIgnoreCase(sku).orElseThrow(() -> new ResourceNotFoundException("Product", "SKU", sku));
+        productbySku.setActive(isAvailable);
+        productRepository.save(productbySku);
     }
 
     @Override
@@ -137,32 +159,20 @@ public class ProductService implements IProductService{
 
     @Override
     public ProductListItemResponseDto fetchProductById(UUID id) {
-        Optional<Product> productById = productRepository.findById(id);
-        ProductListItemResponseDto product = null;
-        if (productById.isPresent()){
-            product = ProductMapper.productToProductListItemResponseDto(productById.get());
-        }
-        return product;
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product", "Id", String.valueOf(id)));
+        return ProductMapper.productToProductListItemResponseDto(product);
     }
 
     @Override
     public ProductListItemResponseDto fetchProductBySku(String sku) {
-        Optional<Product> productBySku = productRepository.findBySku(sku);
-        ProductListItemResponseDto product = null;
-        if (productBySku.isPresent()){
-        product = ProductMapper.productToProductListItemResponseDto(productBySku.get());
-        }
-        return product;
+        Product product = productRepository.findBySkuIgnoreCase(sku).orElseThrow(() -> new ResourceNotFoundException("Product", "SKU", sku));
+        return ProductMapper.productToProductListItemResponseDto(product);
     }
 
     @Override
     public ProductListItemResponseDto fetchProductByName(String name) {
-        Optional<Product> productByName = productRepository.findByNameIgnoreCase(name);
-        ProductListItemResponseDto product = null;
-        if (productByName.isPresent()){
-            product = ProductMapper.productToProductListItemResponseDto(productByName.get());
-        }
-        return product;
+        Product product = productRepository.findByNameIgnoreCase(name).orElseThrow(() -> new ResourceNotFoundException("Product", "Name", name));
+        return ProductMapper.productToProductListItemResponseDto(product);
     }
 
     @Override

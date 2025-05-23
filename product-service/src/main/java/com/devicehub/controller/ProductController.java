@@ -7,12 +7,15 @@ import com.devicehub.dto.request.TabletRequestDto;
 import com.devicehub.dto.response.*;
 import com.devicehub.entity.Product;
 import com.devicehub.service.IProductService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +24,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "api/v1/product", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
+@Validated
 public class ProductController {
 
 
     private IProductService productService;
 
     @PostMapping("/phone/save")
-    public ResponseEntity<ResponseDto> savePhone(@RequestBody PhoneRequestDto phoneRequestDto){
+    public ResponseEntity<ResponseDto> savePhone(@Valid @RequestBody PhoneRequestDto phoneRequestDto){
 
         productService.savePhone(phoneRequestDto);
         return ResponseEntity
@@ -36,7 +40,7 @@ public class ProductController {
     }
 
     @PostMapping("/tablet/save")
-    public ResponseEntity<ResponseDto> saveTablet(@RequestBody TabletRequestDto tabletRequestDto){
+    public ResponseEntity<ResponseDto> saveTablet(@Valid @RequestBody TabletRequestDto tabletRequestDto){
 
         productService.saveTablet(tabletRequestDto);
         return ResponseEntity
@@ -45,48 +49,34 @@ public class ProductController {
     }
 
     @PutMapping("/phone/update")
-    public ResponseEntity<ResponseDto> updatePhone(@RequestBody PhoneRequestDto phoneRequestDto){
+    public ResponseEntity<ResponseDto> updatePhone(@Valid @RequestBody PhoneRequestDto phoneRequestDto){
 
-        boolean isUpdated = productService.updatePhone(phoneRequestDto);
-        if(isUpdated){
-            return ResponseEntity
+        productService.updatePhone(phoneRequestDto);
+        return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new ResponseDto(ProductConstants.STATUS_200, ProductConstants.PHONE_UPDATE_MSG));
-        }else{
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDto(ProductConstants.STATUS_500, ProductConstants.MESSAGE_500));
-        }
+
     }
 
     @PutMapping("/tablet/update")
-    public ResponseEntity<ResponseDto> updateTablet(@RequestBody TabletRequestDto tabletRequestDto){
+    public ResponseEntity<ResponseDto> updateTablet(@Valid @RequestBody TabletRequestDto tabletRequestDto){
 
-        boolean isUpdated = productService.updateTablet(tabletRequestDto);
-        if(isUpdated){
-            return ResponseEntity
+        productService.updateTablet(tabletRequestDto);
+        return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new ResponseDto(ProductConstants.STATUS_200, ProductConstants.TABLET_UPDATE_MSG));
-        }else{
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDto(ProductConstants.STATUS_500, ProductConstants.MESSAGE_500));
-        }
     }
 
     @PutMapping("/update/availability")
-    public ResponseEntity<ResponseDto> updateAvailability(@RequestParam String sku, @RequestParam boolean isAvailable){
+    public ResponseEntity<ResponseDto> updateAvailability(@RequestParam
+                                                              @Size(min = 3, max = 30, message = "SKU must be between 3 and 30 characters")
+                                                              String sku, @RequestParam boolean isAvailable){
 
-        boolean isUpdated = productService.updateAvailability(sku,isAvailable);
-        if(isUpdated){
+        productService.updateAvailability(sku,isAvailable);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new ResponseDto(ProductConstants.STATUS_200, ProductConstants.UPDATE_AVAILABILITY_MSG));
-        }else{
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDto(ProductConstants.STATUS_500, ProductConstants.MESSAGE_500));
-        }
+
     }
 
     @GetMapping("/all/fetch")
@@ -126,13 +116,17 @@ public class ProductController {
     }
 
     @GetMapping("/fetch/brand/{brand}")
-    public ResponseEntity<Page<ProductListItemResponseDto>> fetchProductByBrand(@PathVariable String brand, @RequestParam int page, @RequestParam int size, @RequestParam(defaultValue = "price") String field){
+    public ResponseEntity<Page<ProductListItemResponseDto>> fetchProductByBrand(@PathVariable
+                                                                                    @Size(min = 2, max = 30, message = "Brand must be between 2 and 30 characters")
+                                                                                    String brand, @RequestParam int page, @RequestParam int size, @RequestParam(defaultValue = "price") String field){
         Page<ProductListItemResponseDto> products = productService.fetchProductByBrand(brand,page,size,field);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
     @GetMapping("/fetch/brand/{brand}/category/{category}")
-    public ResponseEntity<Page<ProductListItemResponseDto>> fetchProductByBrandAndCat(@PathVariable String brand, @PathVariable Product.Category category, @RequestParam int page, @RequestParam int size, @RequestParam(defaultValue = "price") String field){
+    public ResponseEntity<Page<ProductListItemResponseDto>> fetchProductByBrandAndCat(@PathVariable
+                                                                                          @Size(min = 2, max = 30, message = "Brand must be between 2 and 30 characters")
+                                                                                          String brand, @PathVariable Product.Category category, @RequestParam int page, @RequestParam int size, @RequestParam(defaultValue = "price") String field){
         Page<ProductListItemResponseDto> products = productService.fetchProductByBrandAndCat(brand, category,page,size,field);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
@@ -144,13 +138,17 @@ public class ProductController {
     }
 
     @GetMapping("/fetch/sku/{sku}")
-    public ResponseEntity<ProductListItemResponseDto> fetchProductBySku(@PathVariable String sku){
+    public ResponseEntity<ProductListItemResponseDto> fetchProductBySku(@PathVariable
+                                                                            @Size(min = 3, max = 30, message = "SKU must be between 3 and 30 characters")
+                                                                            String sku){
         ProductListItemResponseDto product = productService.fetchProductBySku(sku);
         return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
     @GetMapping("/fetch/name/{name}")
-    public ResponseEntity<ProductListItemResponseDto> fetchProductByName(@PathVariable String name){
+    public ResponseEntity<ProductListItemResponseDto> fetchProductByName(@PathVariable
+                                                                             @Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
+                                                                             String name){
         ProductListItemResponseDto product = productService.fetchProductByName(name);
         return ResponseEntity.status(HttpStatus.OK).body(product);
     }
@@ -162,7 +160,9 @@ public class ProductController {
     }
 
     @GetMapping("/exists/{sku}")
-    public ResponseEntity<Boolean> existsBySku(@PathVariable String sku){
+    public ResponseEntity<Boolean> existsBySku(@PathVariable
+                                                   @Size(min = 3, max = 30, message = "SKU must be between 3 and 30 characters")
+                                                   String sku){
         Boolean products = productService.existBySku(sku);
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
